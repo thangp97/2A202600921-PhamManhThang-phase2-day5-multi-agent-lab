@@ -16,6 +16,7 @@ class ResearchState(BaseModel):
     request: ResearchQuery
     iteration: int = 0
     route_history: list[str] = Field(default_factory=list)
+    next_route: str | None = None
 
     sources: list[SourceDocument] = Field(default_factory=list)
     research_notes: str | None = None

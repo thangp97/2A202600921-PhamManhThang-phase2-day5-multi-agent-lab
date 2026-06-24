@@ -14,6 +14,19 @@ class AgentName(StrEnum):
     CRITIC = "critic"
 
 
+class Verdict(StrEnum):
+    ACCEPT = "accept"
+    REVISE = "revise"
+
+
+class Route(StrEnum):
+    RESEARCHER = "researcher"
+    ANALYST = "analyst"
+    WRITER = "writer"
+    CRITIC = "critic"
+    DONE = "done"
+
+
 class ResearchQuery(BaseModel):
     query: str = Field(..., min_length=5)
     max_sources: int = Field(default=5, ge=1, le=20)
@@ -24,6 +37,7 @@ class AgentResult(BaseModel):
     agent: AgentName
     content: str
     metadata: dict[str, Any] = Field(default_factory=dict)
+    quality_score: float | None = Field(default=None, ge=0, le=10)
 
 
 class SourceDocument(BaseModel):
