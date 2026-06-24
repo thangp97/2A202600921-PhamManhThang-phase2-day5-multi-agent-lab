@@ -9,9 +9,21 @@ def render_markdown_report(metrics: list[BenchmarkMetrics]) -> str:
     TODO(student): Add richer analysis, examples, screenshots, and trace links.
     """
 
-    lines = ["# Benchmark Report", "", "| Run | Latency (s) | Cost (USD) | Quality | Notes |", "|---|---:|---:|---:|---|"]
+    header = "# Benchmark Report"
+    table_header = "| Run | Latency (s) | Cost (USD) | Quality | Notes |"
+    table_sep = "|---|---:|---:|---:|---|"
+    lines = [header, "", table_header, table_sep]
     for item in metrics:
-        cost = "" if item.estimated_cost_usd is None else f"{item.estimated_cost_usd:.4f}"
-        quality = "" if item.quality_score is None else f"{item.quality_score:.1f}"
-        lines.append(f"| {item.run_name} | {item.latency_seconds:.2f} | {cost} | {quality} | {item.notes} |")
+        cost = (
+            "" if item.estimated_cost_usd is None
+            else f"{item.estimated_cost_usd:.4f}"
+        )
+        quality = (
+            "" if item.quality_score is None else f"{item.quality_score:.1f}"
+        )
+        row = (
+            f"| {item.run_name} | {item.latency_seconds:.2f} | {cost} | "
+            f"{quality} | {item.notes} |"
+        )
+        lines.append(row)
     return "\n".join(lines) + "\n"
