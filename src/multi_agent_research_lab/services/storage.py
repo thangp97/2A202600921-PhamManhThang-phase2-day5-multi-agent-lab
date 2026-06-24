@@ -15,3 +15,10 @@ class LocalArtifactStore:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(content, encoding="utf-8")
         return path
+
+
+def save_text(path: str, content: str) -> None:
+    """Write content to an arbitrary path, creating parent directories as needed."""
+    target = Path(path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(content, encoding="utf-8")
