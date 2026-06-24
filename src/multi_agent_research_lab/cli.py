@@ -14,6 +14,7 @@ from multi_agent_research_lab.evaluation.benchmark import run_benchmark
 from multi_agent_research_lab.evaluation.report import render_comparison
 from multi_agent_research_lab.graph.workflow import build_default_workflow
 from multi_agent_research_lab.observability.logging import configure_logging
+from multi_agent_research_lab.observability.tracing import configure_tracing
 from multi_agent_research_lab.services.llm_client import get_llm_client
 from multi_agent_research_lab.services.storage import save_text
 
@@ -24,6 +25,7 @@ console = Console()
 def _settings(backend: str | None) -> Settings:
     settings = get_settings()
     configure_logging(settings.log_level)
+    configure_tracing(settings)
     if backend:
         settings = settings.model_copy(update={"llm_backend": backend})
     return settings
