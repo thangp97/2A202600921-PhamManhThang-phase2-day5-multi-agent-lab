@@ -10,7 +10,7 @@ from multi_agent_research_lab.core.config import get_settings
 from multi_agent_research_lab.core.errors import StudentTodoError
 from multi_agent_research_lab.core.schemas import ResearchQuery
 from multi_agent_research_lab.core.state import ResearchState
-from multi_agent_research_lab.graph.workflow import MultiAgentWorkflow
+from multi_agent_research_lab.graph.workflow import build_default_workflow
 from multi_agent_research_lab.observability.logging import configure_logging
 
 app = typer.Typer(help="Multi-Agent Research Lab starter CLI")
@@ -44,9 +44,10 @@ def multi_agent(
 ) -> None:
     """Run the multi-agent workflow skeleton."""
 
+    settings = get_settings()
     _init()
     state = ResearchState(request=ResearchQuery(query=query))
-    workflow = MultiAgentWorkflow()
+    workflow = build_default_workflow(settings)
     try:
         result = workflow.run(state)
     except StudentTodoError as exc:
