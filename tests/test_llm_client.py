@@ -16,5 +16,6 @@ def test_fake_llm_is_deterministic() -> None:
 
 
 def test_factory_returns_fake_by_default() -> None:
-    settings = Settings()
+    # Bỏ qua .env để kiểm tra default trong code (fake), không phụ thuộc cấu hình runtime.
+    settings = Settings(_env_file=None)  # type: ignore[call-arg]
     assert isinstance(get_llm_client(settings), FakeLLMClient)

@@ -1,9 +1,12 @@
 """Tracing hooks.
 
-This file intentionally avoids binding to one provider. Students can plug in LangSmith,
-Langfuse, OpenTelemetry, or simple JSON traces.
+Provider-agnostic by design: an in-process span by default, augmented with a
+LangSmith run when tracing is enabled and the SDK is installed. Students can
+swap LangSmith for Langfuse/OpenTelemetry by editing `_provider_span` only.
 """
 
+import importlib
+import logging
 import os
 from collections.abc import Iterator
 from contextlib import contextmanager
@@ -12,20 +15,51 @@ from typing import Any
 
 from multi_agent_research_lab.core.config import Settings
 
+logger = logging.getLogger("multi_agent_research_lab.tracing")
+
+
+def _provider_span(name: str, attributes: dict[str, Any] | None) -> Any:
+    """Return a LangSmith span context manager, or None when unavailable.
+
+    No-ops (returns None) unless tracing was enabled by `configure_tracing` and
+    the optional `langsmith` package can be imported. Never raises.
+    """
+    if os.environ.get("LANGCHAIN_TRACING_V2") != "true":
+        return None
+    try:
+        module = importlib.import_module("langsmith")  # lazy: optional dependency
+    except Exception:
+        return None
+    trace = getattr(module, "trace", None)
+    if trace is None:
+        return None
+    try:
+        return trace(name=name, run_type="chain", inputs=attributes or {})
+    except Exception:
+        return None
+
 
 @contextmanager
 def trace_span(name: str, attributes: dict[str, Any] | None = None) -> Iterator[dict[str, Any]]:
-    """Minimal span context used by the skeleton.
+    """Time a unit of work as a span.
 
-    TODO(student): Replace or augment with LangSmith/Langfuse provider spans.
+    Always yields an in-process span dict (`name`, `attributes`,
+    `duration_seconds`); additionally emits a LangSmith run when tracing is on.
     """
 
     started = perf_counter()
     span: dict[str, Any] = {"name": name, "attributes": attributes or {}, "duration_seconds": None}
+    provider = _provider_span(name, attributes)
     try:
-        yield span
+        if provider is None:
+            yield span
+        else:
+            with provider as run:
+                span["provider_run"] = run
+                yield span
     finally:
         span["duration_seconds"] = perf_counter() - started
+        logger.debug("span '%s' finished in %.4fs", name, span["duration_seconds"])
 
 
 def configure_tracing(settings: Settings) -> bool:

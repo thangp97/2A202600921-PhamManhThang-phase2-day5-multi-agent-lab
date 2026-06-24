@@ -45,7 +45,13 @@ class CriticAgent(BaseAgent):
                 agent=AgentName.CRITIC,
                 content=resp.content,
                 quality_score=score,
-                metadata={"verdict": str(verdict), "feedback": feedback},
+                metadata={
+                    "verdict": str(verdict),
+                    "feedback": feedback,
+                    "input_tokens": resp.input_tokens,
+                    "output_tokens": resp.output_tokens,
+                    "cost_usd": resp.cost_usd,
+                },
             )
         )
         state.add_trace_event("critic", {"score": score, "verdict": str(verdict)})

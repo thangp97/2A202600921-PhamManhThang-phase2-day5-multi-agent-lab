@@ -51,5 +51,8 @@ class BenchmarkMetrics(BaseModel):
     run_name: str
     latency_seconds: float
     estimated_cost_usd: float | None = None
+    total_tokens: int | None = None
     quality_score: float | None = Field(default=None, ge=0, le=10)
+    citation_coverage: float | None = Field(default=None, ge=0, le=1)
+    failure_rate: float | None = Field(default=None, ge=0, le=1)
     notes: str = ""

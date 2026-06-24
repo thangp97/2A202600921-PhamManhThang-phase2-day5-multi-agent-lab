@@ -15,4 +15,5 @@ def test_fake_search_returns_n_sources() -> None:
 
 
 def test_factory_returns_fake_by_default() -> None:
-    assert isinstance(get_search_client(Settings()), FakeSearchClient)
+    # Bỏ qua .env để kiểm tra default trong code (fake), không phụ thuộc cấu hình runtime.
+    assert isinstance(get_search_client(Settings(_env_file=None)), FakeSearchClient)  # type: ignore[call-arg]

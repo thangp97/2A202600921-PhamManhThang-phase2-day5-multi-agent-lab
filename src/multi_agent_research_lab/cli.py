@@ -82,8 +82,12 @@ def benchmark(
     _, single = run_benchmark("single", query, lambda q: _run_baseline(q, settings))
     _, multi = run_benchmark("multi", query, lambda q: _run_multi(q, settings))
     report = render_comparison([single, multi])
-    save_text(out, report)
-    console.print(report)
+    note = (
+        f"\n_Backend: llm={settings.llm_backend}, search={settings.search_backend}._\n"
+        f"_Query: {query}_\n"
+    )
+    save_text(out, report + note)
+    console.print(report + note)
     console.print(f"\nSaved report to {out}")
 
 

@@ -25,6 +25,16 @@ def heuristic_score(state: ResearchState, target_words: int = 300) -> float:
     return round(weighted * 10.0, 2)
 
 
+def citation_coverage(state: ResearchState) -> float:
+    """Tỷ lệ nguồn thu thập được trích dẫn (theo title) trong câu trả lời cuối."""
+    sources = state.sources
+    if not sources:
+        return 0.0
+    answer = state.final_answer or ""
+    cited = sum(1 for s in sources if s.title and s.title in answer)
+    return round(cited / len(sources), 2)
+
+
 def llm_judge_score(state: ResearchState, llm_client: LLMClient) -> float:
     resp = llm_client.complete(
         JUDGE_SYSTEM, judge_user(state.request.query, state.final_answer or "")

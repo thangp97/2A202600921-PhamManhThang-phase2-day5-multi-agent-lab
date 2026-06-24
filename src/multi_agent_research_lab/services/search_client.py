@@ -30,7 +30,7 @@ class TavilySearchClient(SearchClient):
     _client: Any
 
     def __init__(self, api_key: str) -> None:
-        import tavily  # type: ignore[import-not-found]
+        import tavily  # type: ignore[import-untyped]
 
         self._client = tavily.TavilyClient(api_key=api_key)
 
