@@ -37,4 +37,6 @@ class WriterAgent(BaseAgent):
             )
         )
         state.add_trace_event("writer", {})
+        state.add_trace_event("writer_revision_marker", {"answer_version": len(
+            [r for r in state.agent_results if r.agent == AgentName.WRITER])})
         return state
