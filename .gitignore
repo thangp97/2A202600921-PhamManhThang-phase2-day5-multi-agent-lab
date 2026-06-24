@@ -13,3 +13,4 @@ build/
 reports/*.json
 reports/*.md
 !.gitkeep
+.claude/worktrees/
